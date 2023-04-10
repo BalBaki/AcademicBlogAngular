@@ -1,0 +1,63 @@
+<div *ngIf="articles.length>0; else noArticle">
+
+    <div class="container-fluid mt-5">
+        <div class="row justify-content-center">
+            <div class="col-12 col-sm-9 col-md-4 col-lg-4 col-xl-2  text-center pdfarticles ">
+                <div class="list-group mt-1 " *ngFor="let article of articles">
+                    <a class="list-group-item list-group-item-dark {{article.id}}" style="  word-break: break-all;"
+                        (mouseover)="selectOver(article.id)" (mouseout)="selectOut(article.id)"
+                        (click)=show(article)>{{article.title}}</a>
+                </div>
+            </div>
+            
+
+
+            <div class="col-12 col-sm-9 col-md-8 col-lg-8 col-xl-10  mt-1 mr-sm-0 text-center">
+                <div *ngIf="!pdfSrc; else baki" >
+                    <!-- <h1>Bloguma Hosgeldiniz.</h1> -->
+                    <input class="form-control pt-4 pb-4 " type="search"
+                        placeholder="Aramak istediginiz döküman ismini giriniz." [(ngModel)]="filterText">
+                </div>
+                <ng-template #baki>
+                    <div class="mt-3">
+                        <button (click)=previousPdf()>Geri</button>
+                        <button (click)=reset()>Kapat</button>
+                        <button (click)=nextPdf()>İleri</button>
+                        <pdf-viewer [src]="pdfSrc" [render-text]="true" [autoresize]="true"  [original-size]="false"  ></pdf-viewer>
+                    </div>
+                </ng-template>
+                <div *ngIf="!pdfSrc">
+
+                    <div class="card  mt-2 ml-4 mr-4 text-center" style=" width: 18rem;display: inline-block;"
+                        *ngFor="let article of articles | pdfFilter:filterText">
+
+                        <div class="card-body">
+                            <h5 class="{{article.id}}" (click)=show(article) style="cursor: pointer;"
+                                (mouseover)="selectOver(article.id)" (mouseout)="selectOut(article.id)">
+                                {{article.title}}</h5>
+                            <p class="card-text">{{article.explanation}}</p>
+                        </div>
+
+                        <!-- <div class="card-body" >
+                        <a  class="card-link" (click)=show(article) ></a>
+                    </div> -->
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <a class="mbtn" (click)=reset()>Anasayfa</a>
+
+    </div>
+</div>
+
+<ng-template #noArticle >
+
+    <div style="margin-top : 20%">
+        <h1 class = "text-center ">
+            ŞU ANDA SAYFADA MAKALE EKLİ DEGİLDİR.
+        </h1>
+    </div>
+   
+</ng-template>

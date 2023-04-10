@@ -1,0 +1,180 @@
+<nav class="navbar navbar-light bg-light">
+  <a routerLink="/blog" target="_blank" class="navbar-brand">BLOG</a>
+  <form class="form-inline">
+    <button class="btn btn-danger my-2 my-sm-0" (click)="logOut()">Çıkış</button>
+  </form>
+</nav>
+
+
+<div class="container mt-5">
+  <div class="row justify-content-center mt-5">
+    <div class="col-8 col-sm-8 col-md-6 col-lg-5 col-xl-5 ml-xl-5 pl-xl-4">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <input type="file" name="selectedFile" (change)="onFileChange($event)" accept="application/pdf">
+        <div *ngIf="this.form.get('selectedFile').value.name">
+          <input class="form-control mt-2" type="text" formControlName="title" placeholder="Başlık giriniz">
+          <div class="alert alert-danger mt-2"
+            *ngIf="form.get('title').touched && form.get('title').hasError('required')">Başlık alanı boş bırakılamaz.
+          </div>
+          <textarea class="form-control mt-2" style="height: 150px; resize: none;" maxlength="150" type="text"
+            formControlName="explanation" placeholder="Açıklama giriniz."></textarea>
+          <div class="alert alert-danger mt-2"
+            *ngIf="form.get('explanation').touched && form.get('explanation').hasError('required')">Açıklama alanı boş
+            bırakılamaz.</div>
+          <button class="mt-2" type="submit" [disabled]="form.invalid">Upload</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="row justify-content-center mt-5">
+    <div class="col-12">
+
+      <table class="table table-striped table-bordered articles" style="table-layout: fixed; word-break:break-all;">
+        <thead>
+          <tr>
+            <th scope="col">Title</th>
+            <th scope="col">Explanation</th>
+            <th scope="col">Dosya Adı</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <tr *ngFor='let article of articles'>
+            <td>{{article.title}}</td>
+            <td style="max-height: 100px !important; overflow-y:hidden;">{{article.explanation}}</td>
+            <td style="position: relative;">{{article.fileName}}
+              <div class="mt-1 row justify-content-center">
+                <a class="btn btn-danger " (click)=deleteFile(article.id)>Sil</a>
+                <a class="btn btn-success ml-2" (click)=edit(article)  data-toggle="modal" data-target="#editModal"
+                >Edit</a>
+                <a class="btn btn-primary ml-md-2 mt-2 mt-md-0" data-toggle="modal" data-target="#changeFileModal" (click)=changeFile(article)>Change File</a>
+              </div>
+            </td>
+          </tr>
+
+        </tbody>
+
+      </table>
+    </div>
+  </div>
+</div>
+
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"  
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">EDIT</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="updateForm" (ngSubmit)="updateArticle()">
+          <h3>Title</h3>
+          <textarea class="form-control mt-2" type="text" formControlName="title" style="height: 100px; resize: none;"
+            value="{{this.article.title}}"> {{this.article.title}}</textarea>
+          <div class="alert alert-danger mt-2"
+            *ngIf="updateForm.get('title').touched && updateForm.get('title').hasError('required')">Başlık alanı boş
+            bırakılamaz.
+          </div>
+    
+          <h3 class="mt-2">Explanation</h3> 
+          <textarea class="form-control mt-2" style="height: 150px; resize: none;" maxlength="150" type="text"
+            formControlName="explanation" value="{{this.article.explanation}}">{{this.article.explanation}}</textarea>
+          <div class="alert alert-danger mt-2"
+            *ngIf="updateForm.get('explanation').touched && updateForm.get('explanation').hasError('required')">Açıklama
+            alanı boş
+            bırakılamaz.</div>
+    
+    
+          <h3 class="mt-2">Dosya Adı</h3>
+          <input type="text" class="form-control mt-2" formControlName="fileName">
+          <div class="alert alert-danger mt-2"
+            *ngIf="updateForm.get('fileName').touched && updateForm.get('fileName').hasError('required')">Dosya Adı boş
+            bırakılamaz.</div>
+    
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Iptal</button>
+            <button type="submit" class="btn btn-primary" [disabled]="updateForm.invalid">Kaydet</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<!-- Change File Modal -->
+<div class="modal fade" id="changeFileModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="file" id="newSelectedFile" accept="application/pdf" (change)="newFileOnFileChange($event)">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" [disabled] = "!file" (click)="changeFileUpload()" >Dosyayı Degistir</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Deneme Modal -->
+<!-- <ng-template #content let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Hi there!</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="updateForm" (ngSubmit)="updateArticle()">
+      <h3>Title</h3>
+      <textarea class="form-control mt-2" type="text" formControlName="title" style="height: 100px; resize: none;"
+        value="{{this.article.title}}"> {{this.article.title}}</textarea>
+      <div class="alert alert-danger mt-2"
+        *ngIf="updateForm.get('title').touched && updateForm.get('title').hasError('required')">Başlık alanı boş
+        bırakılamaz.
+      </div>
+
+      <h3 class="mt-2">Explanation</h3> 
+      <textarea class="form-control mt-2" style="height: 150px; resize: none;" maxlength="150" type="text"
+        formControlName="explanation" value="{{this.article.explanation}}">{{this.article.explanation}}</textarea>
+      <div class="alert alert-danger mt-2"
+        *ngIf="updateForm.get('explanation').touched && updateForm.get('explanation').hasError('required')">Açıklama
+        alanı boş
+        bırakılamaz.</div>
+
+
+      <h3 class="mt-2">Dosya Adı</h3>
+      <input type="text" class="form-control mt-2" formControlName="fileName">
+      <div class="alert alert-danger mt-2"
+        *ngIf="updateForm.get('fileName').touched && updateForm.get('fileName').hasError('required')">Dosya Adı boş
+        bırakılamaz.</div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" [disabled]="updateForm.invalid">Save changes</button>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="c(updateArticle())">Save</button>
+  </div>  
+</ng-template> -->
+
+  

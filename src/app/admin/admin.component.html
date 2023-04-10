@@ -1,0 +1,31 @@
+<form  class="form-signin" [formGroup]="loginForm" (submit)="login()">
+    <div class="text-center mb-4">
+      <img class="mb-4" src="/docs/4.3/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72">
+      <h1 class="h3 mb-3 font-weight-normal">ADMIN SIGN IN</h1>
+    </div>
+  
+    <div class="form-label-group">
+      <input type="email" id="inputEmail" class="form-control" formControlName="eMail" placeholder="Email address" required autofocus>
+      <label for="inputEmail">Email address</label>
+    
+    </div>
+  
+    <div class="form-label-group">
+      <input type="password" id="inputPassword" class="form-control"  formControlName="password" placeholder="Password" required>
+      <label for="inputPassword">Password</label>
+    </div>
+  
+
+    <button class="btn btn-lg btn-primary btn-block" type="submit" [disabled]="loginForm.invalid">Giriş</button>
+  </form>
+
+  <!-- <body>
+    <form class="box" [formGroup]="loginForm" (submit)="login()">
+      <h1>Login</h1>
+      <input type="text" name="" placeholder="Username"  formControlName="eMail">
+      <input type="password" name="" placeholder="Password" formControlName="password"> 
+      <input type="submit"  value="Login" [disabled]="loginForm.invalid">
+    </form>
+  
+    <a class="mbtn" (click)=reset()>Anasayfa</a>
+  </body> -->
